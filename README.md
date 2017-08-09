@@ -1,5 +1,5 @@
 # Fuse.AzureMobileServiceClient
-An uno wrapper around Azure Mobile Service clients for Fuse. 
+An uno wrapper around [Azure Mobile Service](https://azure.microsoft.com/en-us/services/app-service/mobile/) clients for [Fuse](https://www.fusetools.com/). 
 
 Currently only supports login through Facebook/Google on Android.
 
