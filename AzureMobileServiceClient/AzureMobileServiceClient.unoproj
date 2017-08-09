@@ -1,0 +1,19 @@
+{
+  "IsTransitive": true,
+  "Packages": [
+    "Fuse",
+    "Fuse.Platform",
+    "Fuse.Scripting",
+    "Fuse.Reactive",
+    "FuseJS",
+    "Uno.Permissions",
+    "Uno.Threading"
+  ],
+  "Includes": [
+    "AzureMobileServiceClient.Android.uno",
+    "AzureMobileServiceClient.iOS.uno",
+    "AzureMobileServiceClient.uno",
+    "AzureMobileServiceClient.uxl",
+    "AzureMobileServiceClientModule.uno"
+  ]
+}

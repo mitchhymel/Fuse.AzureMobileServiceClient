@@ -1,0 +1,34 @@
+<Extensions Backend="CPlusPlus">
+
+  <Require Condition="Android" Android.ResStrings.Declaration>
+    <![CDATA[
+      <string name="AZURE_MOBILE_SERVICE_URI_SCHEME"></string>
+    ]]>
+  </Require>
+
+  <Require Condition="Android" Gradle.BuildFile.End>
+    <![CDATA[
+      task updateManifest(type: UpdateManifestTask)
+      class UpdateManifestTask extends DefaultTask {
+        @TaskAction
+        def update() {
+          //TODO: Get manifest path for version/flavor
+          def manifestPath = ""; // something like build/Android/Debug/app/src/main/AndroidManifest.xml
+          def manifestFile = new File(manifestPath)
+          def content = manifestFile.getText()
+          def updatedContent = content.replaceAll("android:allowBackup=\"false\"", "android:allowBackup=\"true\"")
+          updatedContent = updatedContent.replaceAll("android:taskAffinity=\"\"", "")
+          manifestFile.write(updatedContent)
+        }
+      }
+
+      afterEvaluate {
+        processDebugManifest.dependsOn updateManifest
+      }
+
+      android.defaultConfig {
+        multiDexEnabled true
+      }
+    ]]>
+  </Require>
+</Extensions>
