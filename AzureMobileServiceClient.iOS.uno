@@ -15,7 +15,7 @@ public extern(iOS) class AzureMobileServiceClient
   @}
 
   [Foreign(Language.ObjC)]
-  public extern(iOS) void Login(string provider, string uriScheme)
+  public extern(iOS) void Login(string provider, string uriScheme, Action<User> onSuccess, Action<string> onError)
   @{
 
   @}

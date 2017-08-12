@@ -13,7 +13,7 @@ You can do this by adding the below to a .uxl file and including it in your .uno
 <Extensions Backend="CPlusPlus">
   <Require Condition="Android" Android.ResStrings.Declaration>
     <![CDATA[
-      <string name="AZURE_MOBILE_SERVICE_URI_SCHEME"></string>
+      <string name="AZURE_MOBILE_SERVICE_URI_SCHEME">com.example.app</string>
     ]]>
   </Require>
 </Extensions>

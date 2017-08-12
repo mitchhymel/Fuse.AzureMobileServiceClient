@@ -18,18 +18,14 @@ public extern(Android) class AzureMobileServiceClient
 {
   extern(Android) Java.Object _client;
   extern(Android) int _requestCode = 1;
+  extern(Android) Java.Object _resultListener;
 
   [Foreign(Language.Java)]
   public extern(Android) void Init(string azureUri)
   @{
-    com.fuse.Activity.ResultListener listener = new com.fuse.Activity.ResultListener() {
-      @Override public boolean onResult(int requestCode, int resultCode, android.content.Intent data) {
-        return @{AzureMobileServiceClient:Of(_this).OnResult(int, int, Java.Object):Call(requestCode, resultCode, data)};
-      }
-    };
-    com.fuse.Activity.subscribeToResults(listener);
 
-    try {
+    try
+    {
       MobileServiceClient client = new MobileServiceClient(azureUri, com.fuse.Activity.getRootActivity());
       @{AzureMobileServiceClient:Of(_this)._client:Set(client)};
     }
@@ -39,8 +35,22 @@ public extern(Android) class AzureMobileServiceClient
   @}
 
   [Foreign(Language.Java)]
-  public extern(Android) void Login(string provider, string uriScheme)
+  public extern(Android) void Login(string provider, string uriScheme, Action<User> onSuccess, Action<string> onError)
   @{
+    com.fuse.Activity.ResultListener listener = (com.fuse.Activity.ResultListener)@{AzureMobileServiceClient:Of(_this)._resultListener:Get()};
+    if (listener != null)
+    {
+      com.fuse.Activity.unsubscribeFromResults(listener);
+    }
+
+    listener = new com.fuse.Activity.ResultListener() {
+      @Override public boolean onResult(int requestCode, int resultCode, android.content.Intent data) {
+        return @{AzureMobileServiceClient:Of(_this).OnResult(int, int, Java.Object, Action<User>, Action<string>):Call(requestCode, resultCode, data, onSuccess, onError)};
+      }
+    };
+    @{AzureMobileServiceClient:Of(_this)._resultListener:Set(listener)};
+    com.fuse.Activity.subscribeToResults(listener);
+
     MobileServiceClient client = (MobileServiceClient)@{AzureMobileServiceClient:Of(_this)._client:Get()};
     try
     {
@@ -53,14 +63,31 @@ public extern(Android) class AzureMobileServiceClient
   @}
 
   [Foreign(Language.Java)]
-  extern(Android) bool OnResult(int requestCode, int resultCode, Java.Object intent)
+  extern(Android) bool OnResult(int requestCode, int resultCode, Java.Object intent, Action<User> onSuccess, Action<string> onError)
   @{
     Log.e("AzureMobileServiceClient", "in OnResult()");
     if (resultCode == android.app.Activity.RESULT_OK)
     {
-      if (requestCode == (int)@{AzureMobileServiceClient:Of(_this)._requestCode})
+      if (requestCode == (int)@{AzureMobileServiceClient:Of(_this)._requestCode:Get()})
       {
-        @{AzureMobileServiceClient:Of(_this).HandleIntent(Java.Object):Call(intent)};
+        MobileServiceClient client = (MobileServiceClient)@{AzureMobileServiceClient:Of(_this)._client:Get()};
+        MobileServiceActivityResult result = client.onActivityResult((android.content.Intent)intent);
+        if (result.isLoggedIn())
+        {
+          Log.e("AzureMobileServiceClient", "You are now logged in " + client.getCurrentUser().getUserId());
+
+          String userId = client.getCurrentUser().getUserId();
+          String authenticationToken = client.getCurrentUser().getAuthenticationToken();
+          UnoObject user = @{User(string, string):New(userId, authenticationToken)};
+          onSuccess.run(user);
+        }
+        else
+        {
+          String errorMessage = result.getErrorMessage();
+          Log.e("AzureMobileServiceClient", "Error: " + errorMessage);
+
+          onError.run(errorMessage);
+        }
       }
     }
     else
@@ -69,23 +96,6 @@ public extern(Android) class AzureMobileServiceClient
     }
 
     return false;
-  @}
-
-  [Foreign(Language.Java)]
-  extern(Android) void HandleIntent(Java.Object intent)
-  @{
-    Log.e("AzureMobileServiceClient", "inHandleIntent");
-    MobileServiceClient client = (MobileServiceClient)@{AzureMobileServiceClient:Of(_this)._client:Get()};
-    MobileServiceActivityResult result = client.onActivityResult((android.content.Intent)intent);
-    if (result.isLoggedIn())
-    {
-      Log.e("AzureMobileServiceClient", "You are now logged in " + client.getCurrentUser().getUserId());
-    }
-    else
-    {
-      String errorMessage = result.getErrorMessage();
-      Log.e("AzureMobileServiceClient", "Error: " + errorMessage);
-    }
   @}
 
 

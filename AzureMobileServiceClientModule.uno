@@ -1,6 +1,7 @@
 using Fuse;
 using Fuse.Scripting;
 using Uno.UX;
+using Uno.Threading;
 
 [UXGlobalModule]
 public class AzureMobileServiceClientModule : NativeModule
@@ -20,7 +21,7 @@ public class AzureMobileServiceClientModule : NativeModule
     _instance = this;
     Resource.SetGlobalKey(_instance, "AzureMobileServiceClient");
     AddMember(new NativeFunction("initialize", (NativeCallback)Init));
-    AddMember(new NativeFunction("login", (NativeCallback)Login));
+    AddMember(new NativePromise<User, Fuse.Scripting.Object>("login", Login, User.Convert));
   }
 
   object Init(Context c, object[] args)
@@ -29,9 +30,8 @@ public class AzureMobileServiceClientModule : NativeModule
     return null;
   }
 
-  object Login(Context c, object[] args)
+  Future<User> Login(object[] args)
   {
-    _client.Login((string)args[0], (string)args[1]);
-    return null;
+    return new LoginPromise(_client, (string)args[0], (string)args[1]);
   }
 }

@@ -1,0 +1,44 @@
+<Extensions Backend="CPlusPlus">
+  <Require Condition="Android" AndroidManifest.ApplicationElement>
+    <![CDATA[
+      <activity android:name="com.microsoft.windowsazure.mobileservices.authentication.RedirectUrlActivity"
+            android:launchMode="singleTop" android:noHistory="true">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data
+                  android:scheme="@string/AZURE_MOBILE_SERVICE_URI_SCHEME"
+                  android:host="easyauth.callback"
+                />
+            </intent-filter>
+        </activity>
+    ]]>
+  </Require>
+
+  <Require Condition="Android" Gradle.BuildFile.End>
+    <![CDATA[
+      android.defaultConfig {
+        multiDexEnabled true
+      }
+
+      android.applicationVariants.all { variant ->
+        variant.outputs.each { output ->
+          def taskName = "update${output.name.capitalize()}Manifest"
+          tasks.create(name: taskName) {
+            doFirst {
+              def manifestOutFile = new File("app/src/main/AndroidManifest.xml")
+              def content = manifestOutFile.getText()
+              def updatedContent = content.replaceAll("android:allowBackup=\"false\"", "android:allowBackup=\"true\"")
+              updatedContent = updatedContent.replaceAll("android:taskAffinity=\"\"", "")
+              manifestOutFile.write(updatedContent)
+            }
+          }
+
+          output.processManifest.dependsOn taskName
+        }
+      }
+
+    ]]>
+  </Require>
+</Extensions>

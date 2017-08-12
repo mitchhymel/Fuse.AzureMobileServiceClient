@@ -10,6 +10,8 @@
     "Uno.Threading"
   ],
   "Includes": [
+    "Models/*.uno",
+    "Helpers/*.uno",
     "AzureMobileServiceClient.Android.uno",
     "AzureMobileServiceClient.iOS.uno",
     "AzureMobileServiceClient.uno",

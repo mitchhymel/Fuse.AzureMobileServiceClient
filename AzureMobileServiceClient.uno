@@ -12,7 +12,7 @@ public extern(!iOS && !Android) class AzureMobileServiceClient
 
   }
 
-  public extern(!iOS && !Android) void Login(string provider, string uriScheme)
+  public extern(!iOS && !Android) void Login(string provider, string uriScheme, Action<User> onSuccess, Action<string> onError)
   {
 
   }
