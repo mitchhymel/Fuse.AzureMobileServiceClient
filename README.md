@@ -2,8 +2,8 @@
 An uno wrapper around [Azure Mobile Service](https://azure.microsoft.com/en-us/services/app-service/mobile/) clients for [Fuse](https://www.fusetools.com/). 
 
 Functionality supported (Android only):
-Login with Google
-Login with Facebook
+- Login with Google
+- Login with Facebook
 
 
 # Setup
