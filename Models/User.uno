@@ -16,7 +16,7 @@ public class User
 		return _userId;
 	}
 
-	public string  getAuthenticationToken() {
+	public string getAuthenticationToken() {
 		return _authenticationToken;
 	}
 
@@ -27,4 +27,5 @@ public class User
     wrapperObject["authenticationToken"] = user.getAuthenticationToken();
     return wrapperObject;
   }
+
 }

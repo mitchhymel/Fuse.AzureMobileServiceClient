@@ -6,8 +6,8 @@ using Uno.Threading;
 [UXGlobalModule]
 public class AzureMobileServiceClientModule : NativeModule
 {
-  static readonly AzureMobileServiceClientModule _instance;
   readonly AzureMobileServiceClient _client;
+  static readonly AzureMobileServiceClientModule _instance;
 
   public AzureMobileServiceClientModule()
   {
@@ -16,15 +16,17 @@ public class AzureMobileServiceClientModule : NativeModule
       return;
     }
 
-    _client = new AzureMobileServiceClient();
-
     _instance = this;
     Resource.SetGlobalKey(_instance, "AzureMobileServiceClient");
+
+    _client = new AzureMobileServiceClient();
+
     AddMember(new NativeFunction("initialize", (NativeCallback)Init));
     AddMember(new NativePromise<User, Fuse.Scripting.Object>("login", Login, User.Convert));
+    AddMember(new NativeFunction("getCurrentUser", (NativeCallback)GetCurrentUser));
   }
 
-  object Init(Context c, object[] args)
+  object Init(Context c, object[]args)
   {
     _client.Init((string)args[0]);
     return null;
@@ -33,5 +35,10 @@ public class AzureMobileServiceClientModule : NativeModule
   Future<User> Login(object[] args)
   {
     return new LoginPromise(_client, (string)args[0], (string)args[1]);
+  }
+
+  Fuse.Scripting.Object GetCurrentUser(Context c, object[] args)
+  {
+    return User.Convert(c, _client.GetCurrentUser());
   }
 }

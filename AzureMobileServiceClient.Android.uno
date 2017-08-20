@@ -63,6 +63,24 @@ public extern(Android) class AzureMobileServiceClient
   @}
 
   [Foreign(Language.Java)]
+  public extern(Android) User GetCurrentUser()
+  @{
+    MobileServiceClient client = (MobileServiceClient)@{AzureMobileServiceClient:Of(_this)._client:Get()};
+    if (client.getCurrentUser() != null)
+    {
+      String userId = client.getCurrentUser().getUserId();
+      String authenticationToken = client.getCurrentUser().getAuthenticationToken();
+      UnoObject user = @{User(string, string):New(userId, authenticationToken)};
+      return user;
+    }
+    else
+    {
+      return null;
+    }
+  @}
+
+
+  [Foreign(Language.Java)]
   extern(Android) bool OnResult(int requestCode, int resultCode, Java.Object intent, Action<User> onSuccess, Action<string> onError)
   @{
     Log.e("AzureMobileServiceClient", "in OnResult()");
@@ -75,11 +93,7 @@ public extern(Android) class AzureMobileServiceClient
         if (result.isLoggedIn())
         {
           Log.e("AzureMobileServiceClient", "You are now logged in " + client.getCurrentUser().getUserId());
-
-          String userId = client.getCurrentUser().getUserId();
-          String authenticationToken = client.getCurrentUser().getAuthenticationToken();
-          UnoObject user = @{User(string, string):New(userId, authenticationToken)};
-          onSuccess.run(user);
+          onSuccess.run((UnoObject)@{AzureMobileServiceClient:Of(_this).GetCurrentUser():Call()});
         }
         else
         {

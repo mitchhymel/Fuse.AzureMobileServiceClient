@@ -19,4 +19,11 @@ public extern(iOS) class AzureMobileServiceClient
   @{
 
   @}
+
+  [Foreign(Language.ObjC)]
+  public extern(iOS) User GetCurrentUser()
+  @{
+    return null;
+  @}
+
 }

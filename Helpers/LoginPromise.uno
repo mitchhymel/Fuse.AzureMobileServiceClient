@@ -30,12 +30,11 @@ public class LoginPromise : Promise<User>
   {
     if defined(Android)
     {
-        _client.Login(_provider, _uriScheme, this.Resolve, OnError);
+      _client.Login(_provider, _uriScheme, this.Resolve, OnError);
     }
     else
     {
       debug_log "Not implemented";
-      // throw new NotImplementedException();
     }
   }
 
